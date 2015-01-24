@@ -1,28 +1,67 @@
 README
 ======
 
+![look](Themes/info+repl.png)
+
 Requirements
 ------------
 
 Necessary:
 * ghc and a recent Haskell Platform (>= 2012 should do fine)
 * cabal
-* Cabal packages: base, bytestring, aeson, haskell-src-exts (== 1.14.*), haddock (`cabal install aeson haskell-src-exts haddock`)
-* If you are using GHC 7.6, you might have trouble with too new versions of haddock; in that case, try `cabal install haddock --constraint=haddock==2.13.2.1`
+* Cabal packages: base, bytestring, aeson, happy, haskell-src-exts (>= 1.14.0), haddock (`cabal install aeson haskell-src-exts haddock`)
 
 Optional, but useful:
-* [ghc-mod](http://hackage.haskell.org/package/ghc-mod) (for import and LANGUAGE completions and type inference, `cabal install ghc-mod`)
+* [hsdev](http://hackage.haskell.org/package/hsdev) (for inspection, enhanced completion, type inference etc, `cabal install hsdev`) disabled by default, enable it with setting `enable_hsdev` setting to `true`.<br>Provides smart completions (`Ctrl+Alt+Space` for _wide_ completion), and allows commands:
+  * `SublimeHaskell: Insert import for symbol` — add import for declaration
+  * `SublimeHaskell: Find declarations` — find declarations in installed packages and in projects
+  * `SublimeHaskell: Search declarations everywhere` — search declarations in hayoo too
+  * `SublimeHaskell: Clear imports` — remove unnecessary imports and maybe make import list
+  * `SublimeHaskell: Browse module` — get declarations for module
+  * `SublimeHaskell: Show symbol info` — get help for symbol, `Ctrl+K Ctrl+I`
+  * `SublimeHaskell: Go to module` — go to module, `Ctrl+K Ctrl+P`
+  * `SublimeHaskell: Go to declaration` — overrides default, `F12`
+  * `SublimeHaskell: Go to any declaration` — list declaration for all haskell sources
+  * `Ctrl+R`, `Ctrl+Shift+R` — overrides default, goto symbol and goto symbol in project
+  * `SublimeHaskell: Hayoo` — search in hayoo
+  * `SublimeHaskell: Auto fix` — [auto fix](Commands/AutoFix.gif) some of warnings and/or errors (for now redundant imports and hlint hints)
+  * Eval commands
+    * `SublimeHaskell: Eval selection` — eval selected expression, for example
+      * `[1..10]` ⤇ `[1,2,3,4,5,6,7,8,9,10]`
+      * `replicate 10 'a'` ⤇ `aaaaaaaaaa` (note no double quotes for string result)
+    * `SublimeHaskell: Apply to selection` — same as above, but applies function to each selection
+      * `foobar` ⫤ `reverse` ⤇ `raboof`
+      * `[1..10]` ⫤ `reverse` ⤇ `[10,9,8,7,6,5,4,3,2,1]`
+      * `1`, `2`, `3` ⫤ `succ` ⤇ `2`, `3`, `4`
+      * `[1..3]` ⫤ `intercalate ", " . map (\i -> "foo" ++ show i)` ⤇ `foo1, foo2, foo3`
+    * `SublimeHaskell: Apply to selection list` — applies function to list made from selections
+      * `foo`, `bar`, `baz` ⫤ `reverse` ⤇ `baz`, `bar`, `foo`
+      * `foo`, `bar`, `baz` ⫤ `sort` ⤇ `bar`, `baz`, `foo`
+  * Repl commands (uses [SublimeREPL](https://github.com/wuub/SublimeREPL) package)
+    * `SublimeHaskell Repl: GHCi` — runs `ghci`
+    * `SublimeHaskell Repl: GHCi current file` — runs `ghci` and loads current file
+    * `SublimeHaskell Repl: Cabal Repl` — runs `cabal repl` for current project
+    * `SublimeHaskell Repl: Load` — loads current file or project in repl
+  * Context menu commands
+    * `Open package on Hackage` — works within symbol info panel, opens Hackage page
+    * `Open module on Hackage` — words in symbol info panel and in sources, opens Hackage page for selected module
+
 * [stylish-haskell](https://github.com/jaspervdj/stylish-haskell) (for code prettification, `cabal install stylish-haskell`)
+* [ghc-mod](http://hackage.haskell.org/package/ghc-mod) (for import and LANGUAGE completions and type inference, `cabal install ghc-mod`, not used if `hsdev` enabled)
 * [cabal-dev](http://hackage.haskell.org/package/cabal-dev) if you want to use it
-* [haskell-docs](http://hackage.haskell.org/package/haskell-docs) (for documentation in 'Symbol info' command, `cabal install haskell-docs`)
-* [hdevtools](https://github.com/bitc/hdevtools) (or [fork for windows](https://github.com/mvoidex/hdevtools)) (for type inference, `cabal install hdevtools`)
+* [haskell-docs](http://hackage.haskell.org/package/haskell-docs) (for documentation in 'Symbol info' command, `cabal install haskell-docs`, not used if `hsdev` enabled)
+* [hdevtools](https://github.com/bitc/hdevtools) (or [fork for windows](https://github.com/mvoidex/hdevtools)) (for type inference, `cabal install hdevtools`, not used if `hsdev` enabled)
 
 Binaries:
 * If your `cabal`, `ghc-mod`, `ghc` etc. are not installed in a system PATH, you have to adjust SublimeHaskell's `add_to_PATH` setting.
 
+There are also [special theme](Themes/Hasky%20\(Dark\).gif) with enhanced haskell entities coloring<br>
+Note different coloring for types and constructors (in import list, data declaration etc.), special coloring of generic variables in types, pragmas and module imports
+![compare](Themes/Hasky%20\(Dark\).small.gif)
+
 Installation
 ------------
-1. Get Sublime Text 2: <http://www.sublimetext.com/>
+1. Get Sublime Text 2/3: <http://www.sublimetext.com/>
 2. Install the Sublime Package Control package: <http://wbond.net/sublime_packages/package_control/installation>
 3. Use Package Control to install this package (SublimeHaskell)
 
@@ -40,7 +79,7 @@ To use cabal-dev instead of cabal, set use_cabal_dev to true (or use command "Sw
 
 Stylish-haskell can be used to stylish file or selected text.
 
-Use `Ctrl-Shift-R` to go to declaration and `Ctrl-K-I` to show symbol info with documentation. These command are also available through context menu with right-click.
+Use `F12` to go to declaration and `Ctrl-K-I` to show symbol info with documentation. These command are also available through context menu with right-click.
 
 Command 'SublimeHaskell: Browse module' is similar to ghci's browse command
 
